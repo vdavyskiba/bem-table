@@ -11,9 +11,10 @@ var schema = new Schema({
     },
     email: {
         type: String,
+        required: true,
+        unique: true,
         lowercase: true,
-        trim: true,
-        required: true
+        trim: true
     },
     created: {
         type: Date,

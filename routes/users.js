@@ -1,36 +1,25 @@
-var express = require('express');
-var router = express.Router();
-var User = require('../models/user').User;
-var ObjectID = require('mongodb').ObjectID;
+var router = require('express').Router();
+var users = require('../services/users');
 
-var PAGE_SIZE = 10;
-
-
-/* GET users listing. */
-
-router.get('/:page?', function(req, res) {
-    var page  = (req.params.page || 0) * PAGE_SIZE;
-    var query = User.find();
-    query.skip(page).limit(PAGE_SIZE);
-    query.exec(function (err, users) {
-        if (err) throw err;
+router.get('/:page?', function(req, res, next) {
+    users.query(req.params, function (err, users) {
+        if (err) {
+            res.sendStatus(500);
+            return next(500);
+        }
         res.json(users);
     });
 });
 
-/* GET user by id */
 router.get('/get/:id', function(req, res, next) {
-    try {
-        var id = new ObjectID(req.params.id);
-    } catch (e) {
-        next(404);
-        return;
-    }
-
-    User.findById(id, function(err, user) { // ObjectID
-        if (err) return next(err);
+    users.restore(req.params.id, function(err, user) {
+        if (err) {
+            res.sendStatus(500);
+            return next(500);
+        }
         if (!user) {
-            return next(404);
+            res.sendStatus(404);
+            return next(500);
         }
         res.json(user);
     });
