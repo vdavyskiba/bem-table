@@ -2,9 +2,18 @@ module.exports = function(grunt) {
 
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
+        bower: {
+            install: {}
+        },
         execute: {
-            target: {
+            initdb: {
                 src: ['createDb.js']
+            },
+            enb: {
+                options: {
+                    args: ['make']
+                },
+                src: ['./node_modules/enb/bin/enb']
             }
         },
         nodeunit: {
@@ -17,8 +26,10 @@ module.exports = function(grunt) {
 
     grunt.loadNpmTasks('grunt-execute');
     grunt.loadNpmTasks('grunt-contrib-nodeunit');
+    grunt.loadNpmTasks('grunt-bower-task');
 
     grunt.registerTask('default', [
+        'bower',
         'execute',
         'nodeunit'
     ]);
