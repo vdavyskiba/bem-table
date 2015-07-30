@@ -3,7 +3,7 @@ var path = require('path');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-var routes = require('./routes/index');
+//var routes = require('./routes/index');
 var users = require('./routes/users');
 
 var app = express();
@@ -16,9 +16,12 @@ app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', routes);
+app.use('/', express.static(path.join(__dirname, 'desktop.bundles/index')));
+app.use('/libs', express.static(__dirname + '/libs'));
+app.use('/public', express.static(__dirname + '/public'));
+
+//app.use('/', routes);
 app.use('/users', users);
 
 // catch 404 and forward to error handler
