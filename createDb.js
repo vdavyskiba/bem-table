@@ -1,5 +1,5 @@
 var async = require('async');
-var mongoose = require('./lib/mongoose');
+var mongoose = require('./lib/mongoose/mongoose');
 var users = require('./services/users');
 
 async.series([
