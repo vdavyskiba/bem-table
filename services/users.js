@@ -2,6 +2,7 @@ var user = require('../models/user').User;
 var ObjectID = require('mongodb').ObjectID;
 
 module.exports = {
+
     store: function(data, callback) {
         user.create(data, callback);
     },

@@ -7,7 +7,7 @@ module.exports = {
     'TestUsersBaseRouting': function (test) {
         api(app)
             .json()
-            .get('/users')
+            .get('/users/fetch')
             .expectStatus(200)
             .end(function(err, res, body) {
                 if (err) throw err;
@@ -19,7 +19,7 @@ module.exports = {
     'TestUsersPagingRouting': function (test) {
         api(app)
             .json()
-            .get('/users/1')
+            .get('/users/fetch?page=1&count=10')
             .expectStatus(200)
             .end(function(err, res, body) {
                 if (err) throw err;

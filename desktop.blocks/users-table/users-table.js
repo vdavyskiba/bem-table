@@ -1,14 +1,15 @@
 modules.define('users-table', ['i-bem', 'i-bem__dom', 'jquery'], function(provide, BEM, BEMDOM, $) {
 
     provide(BEMDOM.decl({
-        onSetMod: {
-            'js': function() {
+        onSetMod : {
+            'js' : {
+                inited: function () {
 
-                var users = BEM.blocks['users'];
-                console.log(users);
+                    var users = BEM.blocks.users;
+                    console.log('users-table inited js');
+
+                }
             }
         }
-    },{
-
     }));
 });

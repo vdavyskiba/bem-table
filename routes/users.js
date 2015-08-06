@@ -1,8 +1,8 @@
 var router = require('express').Router();
 var users = require('../services/users');
 
-router.get('/:page?', function(req, res, next) {
-    users.query(req.params, function (err, users) {
+router.get('/fetch', function(req, res, next) {
+    users.query(req.query, function (err, users) {
         if (err) {
             res.sendStatus(500);
             return next(500);
