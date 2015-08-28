@@ -4,8 +4,8 @@ modules.define('model', function(provide, MODEL) {
 
         first: {
             type: 'string',
-            validation:{
-                rules:{
+            validation: {
+                rules: {
                     required: true
                 }
             }
@@ -13,8 +13,8 @@ modules.define('model', function(provide, MODEL) {
 
         last: {
             type: 'string',
-            validation:{
-                rules:{
+            validation: {
+                rules: {
                     required: true
                 }
             }

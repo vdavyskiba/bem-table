@@ -1,0 +1,70 @@
+block('table-controller')(
+    elem('row')(
+        content()(function() {
+            return [
+                {
+                    elem:'cell',
+                    content:[
+                        {
+                            block : 'link',
+                            url : this.ctx.url,
+                            content : this.ctx.username,
+                            title : 'go to details'
+                        }
+                    ]
+                },
+                {
+                    elem:'cell',
+                    content:[
+                        {
+                            block : 'link',
+                            target : '_blank',
+                            url : 'mailto:'+ this.ctx.email,
+                            content : this.ctx.email,
+                            title : 'click to write email to user'
+                        }
+                    ]
+                },
+                {
+                    elem:'cell',
+                    content: this.ctx.firstName
+                },
+                {
+                    elem:'cell',
+                    content: this.ctx.lastName
+                },
+                {
+                    elem:'cell',
+                    content:[
+                        {
+                            block: 'checkbox',
+                            mods: {
+                                disabled : true,
+                                checked: this.ctx.active
+                            }
+                        }
+                    ]
+                },
+                {
+                    elem:'cell',
+                    mods:{
+                        balance: this.ctx.status,
+                        cell: 'balance'
+                    },
+                    content: this.ctx.balance
+                },
+                {
+                    elem:'cell',
+                    mods:{
+                        cell:'details'
+                    },
+                    content: this.ctx.details
+                },
+                {
+                    elem:'cell',
+                    content: this.ctx.created
+                }
+            ];
+        })
+    )
+);

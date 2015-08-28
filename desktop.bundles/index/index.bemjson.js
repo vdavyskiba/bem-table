@@ -20,34 +20,29 @@ module.exports = {
                 }
             ]
         },
-        //{block: 'model'},
+
         {
             block: 'model',
-            js: true,
-            modelParams: {
-                name: 'users',
-                data: {
-                    list: [
-                        {
-                            block: 'model',
-                            js: true,
-                            modelParams: {
-                                name: 'user',
-                                data: {username: 'test', email: 'test@testmail.com', active: false, balance: -10.25, details: 'link http://ya.ru'}
-                            }
-                        }
+            modelName: 'model-users'
+        },
+
+        {
+            block: 'table-controller',
+            js: {
+                modelName: 'model-users'
+            },
+            content: [
+                {
+                    elem: 'users-list',
+                    mix: {
+                        block: 'table-controller',
+                        elem: 'model-field',
+                        js: true
+                    },
+                    content:[
+
                     ]
                 }
-            }
-        },
-        {
-            block: 'users-table',
-            mix: [{ block: 'table-controller', js: true }],
-            js: {
-
-            },
-            content:[
-
             ]
         }
     ]

@@ -8,9 +8,6 @@ modules.define('model', function(provide, MODEL) {
                 rules: {
                     required: true
                 }
-            },
-            preprocess: function(val) {
-                return '<a href="/users/get/' + val +'">' + this.get('username') + '</a>';
             }
         },
 
@@ -20,9 +17,6 @@ modules.define('model', function(provide, MODEL) {
                 rules: {
                     required: true
                 }
-            },
-            preprocess: function(val) {
-                return '<i>' + val + '</i>';
             }
         },
 
@@ -60,7 +54,7 @@ modules.define('model', function(provide, MODEL) {
             type: 'number',
             default: 0,
             preprocess: function(val) {
-                return val.toFixed(2)
+                return parseFloat(val.toFixed(2))
             }
         },
 

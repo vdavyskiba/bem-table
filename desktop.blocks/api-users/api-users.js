@@ -4,7 +4,7 @@ modules.define('api-users', ['i-bem', 'jquery'], function(provide, BEM, $) {
 
         fetch: function(success, error, param){
 
-            var data = param || { page: 0, count: 10};
+            var data = param || { page: 0, count: 50};
 
             return $.ajax({
                 type: 'GET',
