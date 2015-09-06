@@ -4,6 +4,7 @@ var users = require('../../services/users');
 exports.TestUserService = function(test){
 
     var userData = {
+        _id: 1,
         username: 'uerservicetesttempuser',
         email: 'uerservicetesttempuser@testmail.com'
     };
@@ -25,7 +26,7 @@ exports.TestUserService = function(test){
         users.store(userData, function(err, user){
             test.equals(err, null, 'expect no errors');
             test.ok(user, 'stored user should exist');
-            userId = user.id;
+            userId = user._id;
             callback();
         });
     }

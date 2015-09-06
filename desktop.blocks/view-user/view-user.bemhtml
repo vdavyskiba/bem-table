@@ -4,6 +4,25 @@ block('table-controller')(
             return [
                 {
                     elem:'cell',
+                    mods:{
+                        cell:'id'
+                    },
+                    content: this.ctx._id
+                },
+                {
+                    elem:'cell',
+                    content:[
+                        {
+                            block: 'checkbox',
+                            mods: {
+                                disabled : true,
+                                checked: this.ctx.active
+                            }
+                        }
+                    ]
+                },
+                {
+                    elem:'cell',
                     content:[
                         {
                             block : 'link',
@@ -32,18 +51,6 @@ block('table-controller')(
                 {
                     elem:'cell',
                     content: this.ctx.lastName
-                },
-                {
-                    elem:'cell',
-                    content:[
-                        {
-                            block: 'checkbox',
-                            mods: {
-                                disabled : true,
-                                checked: this.ctx.active
-                            }
-                        }
-                    ]
                 },
                 {
                     elem:'cell',

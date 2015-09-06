@@ -1,3 +1,6 @@
 ({
-    mustDeps: ['i-bem']
+    mustDeps: [
+        'i-bem',
+        'jquery'
+    ]
 })

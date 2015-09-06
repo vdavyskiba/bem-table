@@ -1,3 +1,3 @@
 ({
-    mustDeps: ['i-model']
+    mustDeps: ['model']
 })

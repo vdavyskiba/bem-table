@@ -1,85 +1,167 @@
 modules.define('table-controller',
-    ['i-bem', 'i-bem__dom', 'jquery', 'BEMHTML', 'glue', 'next-tick', 'api-users', 'model'],
-function(provide, BEM, BEMDOM, $, BEMHTML, Glue, nextTick, api, MODEL) {
+    ['i-bem', 'i-bem__dom', 'jquery', 'BEMHTML', 'glue', 'api-users', 'model',  'view-user'],
+function(provide, BEM, BEMDOM, $, BEMHTML, Glue, apiUsers, MODEL, viewUser) {
 
-    window.$ = $; //todo: workaround for "$.extend is undefined" error inside bem core
+    window.$ = $; //todo: workaround for "$.extend is undefined" exception inside bem core
 
     provide(BEMDOM.decl( { block: this.name, baseBlock: Glue }, {
 
-        onSetMod : {
-            'js' : {
+        onSetMod: {
+            'js': {
                 inited: function () {
-
                     this.__base.apply(this, arguments);
 
-                    this.modelPath = this.model.path();
+                    this.container = this.elem('users-list');
 
-                    console.info('init');
+                    this.collection = this.model.get('list');
 
-                    this.init()
+                    this.appendToEnd(this.page);
+
+                    this.initScrollEvents();
                 }
             }
         },
 
-        init: function(){
-            api.fetch(this.onData.bind(this), this.onError);
+        page: 0,
+
+        count: 25,
+
+        limit: 2,
+
+        offset: 0,
+
+        ROW_H: 43,
+
+        loading: false,
+
+        container: null,
+
+        collection: null,
+
+        initScrollEvents: function(){
+
+            var TRESHOLD = 10,
+                viewport =this.domElem.height(),
+                prevScrollTop = 0;
+
+            function scroll (evt) {
+                var scrolled = evt.target.scrollTop,
+                    height = evt.target.scrollHeight,
+                    trashed = Math.abs(scrolled - prevScrollTop) <= TRESHOLD,
+                    virtual = this.getVirtualHeight();
+
+                if(this.loading || trashed){
+                    return true;
+                }
+
+                if(scrolled + viewport*1.5 > height){
+
+                    this.appendToEnd(++this.page);
+                    prevScrollTop = scrolled;
+                }
+
+                if(virtual && (scrolled - viewport < virtual) && this.page>this.limit){
+
+                    this.prependToTop(--this.page-this.limit);
+                    prevScrollTop = scrolled;
+                }
+
+                return true;
+            }
+
+            this.domElem.on('scroll', scroll.bind(this));
         },
 
-        onData: function (data) {
+        appendToEnd: function(page){
 
-            this.model.set('list', data.map(this.createModel));
+            this.fetchData(page, $.proxy(function(data){
 
-            var container = this.elem('users-list');
+                var compiled = data.map($.proxy(function(data){
+                    var model = this.collection.add(data);
+                    return viewUser.compile(model);
+                }, this));
 
-            container.html('');
+                this.container.append(BEMHTML.apply(compiled));
 
-            var users = this.model.get('list', 'raw');
+                this.removeTop();
 
-            users && BEMDOM.update(container, BEMHTML.apply(users.map(this.generate, this)));
+            },this));
         },
 
-        onError: function (e) {
-            console.error(e);
+        prependToTop: function(page){
+
+            this.fetchData(page, $.proxy(function(data){
+
+                var compiled = data.map($.proxy(function(data){
+                    var model = this.collection.addByIndex(0, data);
+                    return viewUser.compile(model);
+                }, this));
+
+                this.container.prepend(BEMHTML.apply(compiled));
+
+                this.removeBottom();
+
+            },this));
         },
 
-        createModel: function(data) {
-            return MODEL.create('model-user', data);
+        fetchData: function(page, callback){
+            this.loading = true;
+            var params = {
+                page: page,
+                count: this.count
+            };
+            apiUsers.fetch(params, $.proxy(function(data){
+                if(!data.length){
+                    this.loading = false;
+                    return;
+                }
+                callback(data);
+                this.loading = false;
+            },this), console.log);
         },
 
-        generate: function(user) {
+        removeBottom: function(){
 
-            var person = user.get('name'),
-                balance = user.get('balance');
+            var offset = this.page - this.offset;
 
-            return BEMHTML.apply({
-                block: 'table-controller',
-                elem: 'row',
-                mods: {
-                    id: user.id
-                },
-                parentPath: this.modelPath,
-                id: user.id,
+            if(offset <= 0){return}
 
-                active: user.get('active'),
+            var count = offset * this.count;
 
-                url: ['/users/get/', user.get('_id')].join(''),
-                username: user.get('username'),
+            this.container.children().slice(-count).remove();
 
-                email: user.get('email'),
+            while(count--){
+                this.collection.remove(this.collection.getByIndex(this.collection.length()-1).id);
+            }
 
-                firstName: person.get('first'),
+            this.offset -= offset;
+            this.updateScrolableArea();
+        },
 
-                lastName: person.get('last'),
+        removeTop: function(){
 
-                balance: balance,
+            var offset = this.page - this.limit - this.offset;
 
-                status: balance < 0 ? 'negative' : balance > 0 ? 'positive' : '',
+            if(offset <= 0){return}
 
-                details: user.get('details'),
+            var count = offset * this.count;
 
-                created: user.get('created')
+            this.container.children().slice(0, count).remove();
 
-            });
+            while(count--){
+                this.collection.remove(this.collection.getByIndex(0).id);
+            }
+
+            this.offset += offset;
+            this.updateScrolableArea();
+        },
+
+        updateScrolableArea: function(){
+            this.container.css('top', this.getVirtualHeight());
+        },
+
+        getVirtualHeight: function(){
+            return this.ROW_H * this.offset * this.count;
         }
 
     }));

@@ -1,3 +1,3 @@
 ({
-    mustDeps: ['i-model', 'model-person']
+    mustDeps: ['jquery', 'i-bem', 'model', 'model-person']
 })

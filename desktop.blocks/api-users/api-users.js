@@ -2,13 +2,15 @@ modules.define('api-users', ['i-bem', 'jquery'], function(provide, BEM, $) {
 
     provide(BEM.decl({},{
 
-        fetch: function(success, error, param){
+        path: '/users/fetch',
 
-            var data = param || { page: 0, count: 50};
+        fetch: function(param, success, error){
+
+            var data = { page: param.page || 0, count: param.count || 50};
 
             return $.ajax({
                 type: 'GET',
-                url: '/users/fetch',
+                url: this.path,
                 data: data,
                 dataType:' json',
                 success: success,

@@ -30,7 +30,7 @@ module.exports = {
     },
     'TestNotExistedUserViaUsersGetByIdRouting': function (test) {
         api(app)
-            .get('/users/get/1')
+            .get('/users/get/9998')
             .expectStatus(404)
             .end(function(err, res, body) {
                 if (err) throw err;
@@ -42,6 +42,7 @@ module.exports = {
     'TestExistedUserViaUsersGetByIdRouting': function (test) {
 
         var userData = {
+            _id: 9999,
             username: 'uersroutestesttempuser',
             email: 'uersroutestesttempuser@testmail.com'
         };

@@ -2,6 +2,9 @@ var mongoose = require('../lib/mongoose/mongoose');
 var Schema = mongoose.Schema;
 
 var schema = new Schema({
+    _id: {
+        type: Number
+    },
     username: {
         type: String,
         required: true,

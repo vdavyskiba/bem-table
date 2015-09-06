@@ -1,32 +1,24 @@
-body {
+.page {
     font-family: Helvetica, Arial, sans-serif;
 }
-
-.table-controller__row {
-    padding: 10px;
-    border-bottom: 1px dotted #666;
+.header{
+    margin: 10px 20px;
 }
-
-.table-controller__cell {
-    display: inline-block;
-    padding: 0 15px;
+.link{
+    text-decoration: none;
 }
-
-.table-controller__cell_cell_balance {
-    font-weight: bold;
+.link:hover{
+    text-decoration: underline;
 }
-
-.table-controller__cell_balance_positive {
-    color: #0066bb;
-}
-
-.table-controller__cell_balance_negative {
-    color: #b94a48;
-}
-
-.table-controller__cell_cell_details {
-    max-width: 150px;
+.table-controller {
+    height: 800px;
+    max-width: 1024px;
+    margin: auto;
+    position: relative;
     overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    overflow-y: auto;
+}
+.table-controller__users-list {
+    backface-visibility: hidden;
+    position: relative;
 }

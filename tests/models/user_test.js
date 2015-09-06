@@ -4,6 +4,7 @@ module.exports = {
     'TestModelFields': function(test){
 
         var userData = {
+            _id: 1,
             username: 'usermodeltesttempuser',
             email: 'usermodeltesttempuser@somemail.com',
             created: new Date(),
@@ -18,6 +19,7 @@ module.exports = {
 
         var currentUser = new user(userData);
 
+        test.equals(currentUser._id, userData._id, "user should have same field '_id'");
         test.equals(currentUser.username, userData.username, "user should have same field 'username'");
         test.equals(currentUser.email, userData.email, "user should have same field 'email'");
         test.equals(currentUser.balance, userData.balance, "user should have default field 'balance' to be 0");
@@ -31,7 +33,12 @@ module.exports = {
     },
     'TestDefaultModelFields': function(test){
 
-        var userData = {username: 'tempuser', email: 'user@inbox.com'};
+        var userData = {
+            _id: 1,
+            username: 'tempuser',
+            email: 'user@inbox.com'
+        };
+
         var currentUser = new user(userData);
 
         test.equals(currentUser.balance, 0, "user should have default field 'balance' to be 0");

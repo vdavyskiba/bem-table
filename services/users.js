@@ -20,12 +20,12 @@ module.exports = {
     },
     restore: function(id, callback) {
         try {
-            var objectId = new ObjectID(id);
+            user.findById(id)
+                .lean()
+                .exec(callback);
         } catch (e) {
-            return callback();
+            return callback(e);
         }
-        user.findById(objectId)
-            .lean()
-            .exec(callback);
+
     }
 };

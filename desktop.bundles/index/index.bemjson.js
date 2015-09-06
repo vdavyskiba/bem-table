@@ -1,9 +1,9 @@
 module.exports = {
     block: 'page',
-    title: 'test-table',
+    title: 'test-table project',
     head: [
         { elem: 'css', url: '_index.css' },
-        { elem: 'meta', attrs: { name: 'description', content: 'bem-mvc demo example' }}
+        { elem : 'meta', attrs : { name : 'viewport', content : 'width=device-width, initial-scale=1' } }
     ],
     scripts: [
         { elem: 'js', url: '_index.js' }
