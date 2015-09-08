@@ -14,7 +14,7 @@ body,
 .wrapper {
     padding: 20px;
     box-sizing: border-box;
-    max-width: 1280px;
+    max-width: 1400px;
     margin: auto;
 }
 
@@ -37,7 +37,7 @@ body,
 .table-controller {
     height: 85%;
     min-width: 760px;
-    margin: auto;
+    margin: 0 auto 20px;
     overflow: hidden;
     position: relative;
     white-space: nowrap;

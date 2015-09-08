@@ -72,10 +72,6 @@ module.exports = {
                                                 }
                                                 return [
                                                     {
-                                                        tag: 'span',
-                                                        content: item.display
-                                                    },
-                                                    {
                                                         block: 'sort-icon',
                                                         tag: 'span',
                                                         content: [
@@ -99,6 +95,10 @@ module.exports = {
                                                                 title : 'click to sort by ' + item.display + 'descending'
                                                             }
                                                         ]
+                                                    },
+                                                    {
+                                                        tag: 'span',
+                                                        content: item.display
                                                     }
                                                 ]
                                             })()
