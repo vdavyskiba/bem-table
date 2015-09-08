@@ -5,12 +5,17 @@ block('table-controller')(
                 {
                     elem:'cell',
                     mods:{
-                        cell:'id'
+                        align: 'align-r',
+                        width: 'small'
                     },
                     content: this.ctx._id
                 },
                 {
                     elem:'cell',
+                    mods:{
+                        align: 'align-c',
+                        width: 'small'
+                    },
                     content:[
                         {
                             block: 'checkbox',
@@ -56,7 +61,8 @@ block('table-controller')(
                     elem:'cell',
                     mods:{
                         balance: this.ctx.status,
-                        cell: 'balance'
+                        cell: 'balance',
+                        align:'align-r'
                     },
                     content: this.ctx.balance
                 },

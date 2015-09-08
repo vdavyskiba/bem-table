@@ -29,7 +29,7 @@ modules.define('view-user', ['i-bem'], function(provide, BEM) {
 
                 lastName: person.get('last'),
 
-                balance: balance,
+                balance: balance.toFixed(2),
 
                 status: balance < 0 ? 'negative' : balance > 0 ? 'positive' : '',
 

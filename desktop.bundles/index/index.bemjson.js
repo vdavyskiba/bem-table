@@ -10,64 +10,109 @@ module.exports = {
     ],
     content:[
         {
-            block : 'header',
-            tag : 'header',
-            content : [
+            block: 'wrapper',
+            content:[
                 {
-                    block : 'link',
-                    url : 'http://bem.info/',
-                    content : 'bem.info'
-                }
-            ]
-        },
-
-        {
-            block: 'model',
-            modelName: 'model-users'
-        },
-
-        {
-            block: 'table-controller',
-            js: {
-                modelName: 'model-users'
-            },
-            content: [
-                {
-                    block: 'table-controller',
-                    elem: 'header',
-                    content:[
-                        [
-                            '_id',
-                            'active',
-                            'username',
-                            'email',
-                            'name.first',
-                            'name.last',
-                            'balance',
-                            'details',
-                            'created'
-                        ].map(function(name){
-                                var formatted = name.replace('.', ' ').replace('_', '');
-                                return {
-                                    block:'table-controller',
-                                    elem: 'cell',
-                                    content:[
-                                        {
-                                            block : 'link',
-                                            url : '#/orderBy='+ name,
-                                            content : formatted,
-                                            title : 'click to sort be ' + formatted
-                                        }
-                                    ]
-                                }
-                        })
+                    block : 'header',
+                    tag : 'header',
+                    content : [
+                        {
+                            tag: 'span',
+                            content: 'Inspired by:'
+                        },
+                        {
+                            block : 'link',
+                            url : 'http://bem.info/',
+                            content : 'bem.info'
+                        },
+                        {
+                            block : 'link',
+                            url : 'http://www.getmdl.io/components/index.html#tables-section',
+                            content : 'getmdl.io'
+                        }
                     ]
                 },
+
                 {
-                    elem: 'viewport',
-                    content:[
+                    block: 'model',
+                    modelName: 'model-users'
+                },
+
+                {
+                    block: 'table-controller',
+                    js: {
+                        modelName: 'model-users'
+                    },
+                    content: [
                         {
-                            elem: 'users-list'
+                            block: 'table-controller',
+                            elem: 'header',
+                            content:[
+                                [
+                                    { name: '_id', display: 'id', active: true, align: 'align-r', width: 'small'},
+                                    { name: 'active', display: 'active', active: false, align: 'align-c', width: 'small'},
+                                    { name: 'username', display: 'username', active: true},
+                                    { name: 'email', display: 'email', active: true},
+                                    { name: 'name.first', display: 'first name', active: true},
+                                    { name: 'name.last', display: 'last name', active: true},
+                                    { name: 'balance', display: 'balance', active: true, align: 'align-r'},
+                                    { name: 'details', display: 'details', active: true},
+                                    { name: 'created', display: 'created', active: true}
+                                ].map(function(item){
+                                        return {
+                                            block:'table-controller',
+                                            elem: 'cell',
+                                            mods:{
+                                                align: item.align,
+                                                width: item.width
+                                            },
+                                            content:(function(){
+                                                if(!item.active){
+                                                    return item.display
+                                                }
+                                                return [
+                                                    {
+                                                        tag: 'span',
+                                                        content: item.display
+                                                    },
+                                                    {
+                                                        block: 'sort-icon',
+                                                        tag: 'span',
+                                                        content: [
+                                                            {
+                                                                block : 'link',
+                                                                mods: {
+                                                                    icon: 'triangle-icon'
+                                                                },
+                                                                js: true,
+                                                                url : '#/orderBy='+ item.name,
+                                                                content : '&#9650;',
+                                                                title : 'click to sort by ' + item.display + 'ascending'
+                                                            },
+                                                            {
+                                                                block : 'link',
+                                                                mods: {
+                                                                    icon: 'triangle-icon'
+                                                                },
+                                                                url : '#/orderBy=-'+ item.name,
+                                                                content : '&#9660;',
+                                                                title : 'click to sort by ' + item.display + 'descending'
+                                                            }
+                                                        ]
+                                                    }
+                                                ]
+                                            })()
+                                        }
+                                    })
+                            ]
+                        },
+                        {
+                            elem: 'viewport',
+                            content:[
+                                {
+                                    elem: 'users-list'
+                                }
+                            ]
                         }
                     ]
                 }

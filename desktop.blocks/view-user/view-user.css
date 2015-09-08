@@ -1,6 +1,16 @@
 .table-controller__cell {
     display: inline-block;
-    padding: 0 15px;
+    vert-align: top;
+    height: 100%;
+    padding: 15px 0 15px 15px;
+    width: calc(11.11% + 1%);
+    box-sizing: border-box;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.table-controller__cell_width_small {
+    width: calc(11.11% - 3.5%);
 }
 
 .table-controller__cell_cell_balance {
@@ -16,8 +26,17 @@
 }
 
 .table-controller__cell_cell_details {
-    max-width: 150px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+
+}
+
+.table-controller__cell_align_align-r {
+    text-align: right;
+    padding-right: 15px;
+    padding-left: 0;
+    text-overflow: initial;
+}
+.table-controller__cell_align_align-c {
+    text-align: center;
+    padding-left: 0;
+    padding-right: 0;
 }

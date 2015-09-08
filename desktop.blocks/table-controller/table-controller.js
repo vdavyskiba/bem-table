@@ -2,7 +2,7 @@ modules.define('table-controller',
     ['i-bem', 'i-bem__dom', 'jquery', 'BEMHTML', 'glue', 'api-users', 'model', 'view-user'],
 function(provide, BEM, BEMDOM, $, BEMHTML, Glue, apiUsers, MODEL, viewUser) {
 
-    window.$ = $; //todo: workaround for "$.extend is undefined" exception inside bem core
+    window.$ = $; //todo: workaround for "$.extend is undefined" exception inside bem common blocks
 
     provide(BEMDOM.decl( { block: this.name, baseBlock: Glue }, {
 
@@ -18,15 +18,15 @@ function(provide, BEM, BEMDOM, $, BEMHTML, Glue, apiUsers, MODEL, viewUser) {
 
                     this.collection = this.model.get('list');
 
+                    this.sort = this.getSortBy();
+
+                    this.initHeaderSorting();
+
                     this.initScrollEvents();
 
                     this.nextPage(this.page);
 
-                    window.onpopstate = $.proxy(function() {
-                        var idx = location.hash.indexOf('=');
-                        this.sort = idx !== -1 ? location.hash.substring(idx+1) : 'id';
-                        this.reset();
-                    }, this);
+                    window.onpopstate = this.reset.bind(this);
                 }
             }
         },
@@ -41,7 +41,7 @@ function(provide, BEM, BEMDOM, $, BEMHTML, Glue, apiUsers, MODEL, viewUser) {
 
         offset: 0,
 
-        ROW_H: 43,
+        ROW_H: 50,
 
         loading: false,
 
@@ -55,11 +55,13 @@ function(provide, BEM, BEMDOM, $, BEMHTML, Glue, apiUsers, MODEL, viewUser) {
 
         reachTop: true,
 
-        init: function(){
-
+        getSortBy: function(){
+            var idx = location.hash.indexOf('=');
+            return idx !== -1 ? location.hash.substring(idx+1) : 'id';
         },
 
         reset: function(){
+            this.sort = this.getSortBy();
             this.page = 0;
             this.offset = 0;
             this.reachEnd = false;
@@ -83,6 +85,7 @@ function(provide, BEM, BEMDOM, $, BEMHTML, Glue, apiUsers, MODEL, viewUser) {
 
             var TRESHOLD = 10,
                 viewport = this.viewport.height(),
+                viewportPlus = viewport*1.5,
                 prevScrollTop = 0;
 
             function scroll (evt) {
@@ -92,31 +95,52 @@ function(provide, BEM, BEMDOM, $, BEMHTML, Glue, apiUsers, MODEL, viewUser) {
                     virtual = this.getVirtualHeight();
 
                 if(this.loading || trashed){
-                    return true;
+                    return;
                 }
 
-                if(!this.reachEnd && scrolled + viewport*1.5 > height){
+                if(!this.reachEnd && scrolled + viewportPlus > height){
 
                     this.nextPage(++this.page);
                     if(virtual){
                         this.reachTop=false;
                     }
                     prevScrollTop = scrolled;
+                    return;
                 }
 
                 if(!this.reachTop && virtual && (scrolled - viewport < virtual) && this.page-this.pagesLimit > 0){
 
+                    if(scrolled===0){
+                       this.reset();
+                        prevScrollTop = 0;
+                        return;
+                    }
+
                     this.prevPage(--this.page-this.pagesLimit);
-                    if(this.page===0){
+
+                    if(this.page === 0){
                         this.reachTop = true;
                     }
                     prevScrollTop = scrolled;
                 }
-
-                return true;
             }
 
             this.viewport.on('scroll', scroll.bind(this));
+        },
+
+        initHeaderSorting: function(){
+
+            var links = this.domElem.find('.link');
+
+            links.filter($.proxy(function(index, item){
+                var idx = item.href.indexOf('=');
+                return idx !== -1 && item.href.substring(idx+1) == this.sort;
+            }, this)).addClass('link_custom_active');
+
+            links.on('click', function(){
+                links.filter('.link_custom_active').removeClass('link_custom_active');
+                $(this).addClass('link_custom_active')
+            });
         },
 
         addDataToEnd: (function(){

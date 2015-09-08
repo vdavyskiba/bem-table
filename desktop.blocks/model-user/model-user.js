@@ -52,10 +52,7 @@ modules.define('model', function(provide, MODEL) {
 
         balance: {
             type: 'number',
-            default: 0,
-            preprocess: function(val) {
-                return parseFloat(val.toFixed(2))
-            }
+            default: 0
         },
 
         name: {
