@@ -15,10 +15,30 @@
     max-width: 1024px;
     margin: auto;
     position: relative;
+}
+
+.table-controller__viewport {
+    position: relative;
     overflow: hidden;
     overflow-y: auto;
+    height: 100%;
 }
+
+.table-controller__header {
+    padding: 10px;
+    border-bottom: 1px dotted #666;
+    height: 22px;
+    overflow: hidden;
+}
+
 .table-controller__users-list {
     backface-visibility: hidden;
     position: relative;
+}
+
+.table-controller__row {
+    padding: 10px;
+    border-bottom: 1px dotted #666;
+    height: 22px;
+    overflow: hidden;
 }

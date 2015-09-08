@@ -33,14 +33,42 @@ module.exports = {
             },
             content: [
                 {
-                    elem: 'users-list',
-                    mix: {
-                        block: 'table-controller',
-                        elem: 'model-field',
-                        js: true
-                    },
+                    block: 'table-controller',
+                    elem: 'header',
                     content:[
-
+                        [
+                            '_id',
+                            'active',
+                            'username',
+                            'email',
+                            'name.first',
+                            'name.last',
+                            'balance',
+                            'details',
+                            'created'
+                        ].map(function(name){
+                                var formatted = name.replace('.', ' ').replace('_', '');
+                                return {
+                                    block:'table-controller',
+                                    elem: 'cell',
+                                    content:[
+                                        {
+                                            block : 'link',
+                                            url : '#/orderBy='+ name,
+                                            content : formatted,
+                                            title : 'click to sort be ' + formatted
+                                        }
+                                    ]
+                                }
+                        })
+                    ]
+                },
+                {
+                    elem: 'viewport',
+                    content:[
+                        {
+                            elem: 'users-list'
+                        }
                     ]
                 }
             ]

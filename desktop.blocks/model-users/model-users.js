@@ -5,7 +5,7 @@ modules.define('model', function(provide, MODEL) {
         list: {
             type: 'models-list',
             modelName: 'model-user'
-        },
+        }
 
     }));
 

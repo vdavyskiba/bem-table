@@ -6,7 +6,11 @@ modules.define('api-users', ['i-bem', 'jquery'], function(provide, BEM, $) {
 
         fetch: function(param, success, error){
 
-            var data = { page: param.page || 0, count: param.count || 50};
+            var data = {
+                page: param.page || 0,
+                count: param.count || 25,
+                sort: param.sort || 'id'
+            };
 
             return $.ajax({
                 type: 'GET',

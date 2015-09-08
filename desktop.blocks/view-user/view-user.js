@@ -13,10 +13,6 @@ modules.define('view-user', ['i-bem'], function(provide, BEM) {
 
                 elem: 'row',
 
-                mods: {
-                    id: user.id
-                },
-
                 id: user.id,
 
                 _id: user.get('_id'),

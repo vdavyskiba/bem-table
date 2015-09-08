@@ -10,9 +10,11 @@ module.exports = {
         user.findByIdAndRemove(id, callback);
     },
     query: function(params, callback) {
+        var sort = params.sort || '_id';
         var count = params.count || 30;
         var page  = (params.page || 0) * count;
         user.find()
+            .sort(sort)
             .skip(page)
             .limit(count)
             .lean()

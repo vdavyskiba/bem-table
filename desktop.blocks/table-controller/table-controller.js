@@ -1,5 +1,5 @@
 modules.define('table-controller',
-    ['i-bem', 'i-bem__dom', 'jquery', 'BEMHTML', 'glue', 'api-users', 'model',  'view-user'],
+    ['i-bem', 'i-bem__dom', 'jquery', 'BEMHTML', 'glue', 'api-users', 'model', 'view-user'],
 function(provide, BEM, BEMDOM, $, BEMHTML, Glue, apiUsers, MODEL, viewUser) {
 
     window.$ = $; //todo: workaround for "$.extend is undefined" exception inside bem core
@@ -9,15 +9,24 @@ function(provide, BEM, BEMDOM, $, BEMHTML, Glue, apiUsers, MODEL, viewUser) {
         onSetMod: {
             'js': {
                 inited: function () {
+
                     this.__base.apply(this, arguments);
 
                     this.container = this.elem('users-list');
 
+                    this.viewport = this.elem('viewport');
+
                     this.collection = this.model.get('list');
 
-                    this.appendToEnd(this.page);
-
                     this.initScrollEvents();
+
+                    this.nextPage(this.page);
+
+                    window.onpopstate = $.proxy(function() {
+                        var idx = location.hash.indexOf('=');
+                        this.sort = idx !== -1 ? location.hash.substring(idx+1) : 'id';
+                        this.reset();
+                    }, this);
                 }
             }
         },
@@ -26,7 +35,9 @@ function(provide, BEM, BEMDOM, $, BEMHTML, Glue, apiUsers, MODEL, viewUser) {
 
         count: 25,
 
-        limit: 2,
+        sort: 'id',
+
+        pagesLimit: 2,
 
         offset: 0,
 
@@ -36,12 +47,42 @@ function(provide, BEM, BEMDOM, $, BEMHTML, Glue, apiUsers, MODEL, viewUser) {
 
         container: null,
 
+        viewport: null,
+
         collection: null,
+
+        reachEnd: false,
+
+        reachTop: true,
+
+        init: function(){
+
+        },
+
+        reset: function(){
+            this.page = 0;
+            this.offset = 0;
+            this.reachEnd = false;
+            this.reachTop = true;
+            this.container.empty();
+            this.collection.clear();
+            this.updateScroll();
+            this.viewport.scrollTop(0);
+            this.nextPage(this.page);
+        },
+
+        nextPage: function(page){
+            this.fetchData(page, this.addDataToEnd.bind(this));
+        },
+
+        prevPage: function(page){
+            this.fetchData(page, this.addDataToTop.bind(this));
+        },
 
         initScrollEvents: function(){
 
             var TRESHOLD = 10,
-                viewport =this.domElem.height(),
+                viewport = this.viewport.height(),
                 prevScrollTop = 0;
 
             function scroll (evt) {
@@ -54,77 +95,94 @@ function(provide, BEM, BEMDOM, $, BEMHTML, Glue, apiUsers, MODEL, viewUser) {
                     return true;
                 }
 
-                if(scrolled + viewport*1.5 > height){
+                if(!this.reachEnd && scrolled + viewport*1.5 > height){
 
-                    this.appendToEnd(++this.page);
+                    this.nextPage(++this.page);
+                    if(virtual){
+                        this.reachTop=false;
+                    }
                     prevScrollTop = scrolled;
                 }
 
-                if(virtual && (scrolled - viewport < virtual) && this.page>this.limit){
+                if(!this.reachTop && virtual && (scrolled - viewport < virtual) && this.page-this.pagesLimit > 0){
 
-                    this.prependToTop(--this.page-this.limit);
+                    this.prevPage(--this.page-this.pagesLimit);
+                    if(this.page===0){
+                        this.reachTop = true;
+                    }
                     prevScrollTop = scrolled;
                 }
 
                 return true;
             }
 
-            this.domElem.on('scroll', scroll.bind(this));
+            this.viewport.on('scroll', scroll.bind(this));
         },
 
-        appendToEnd: function(page){
+        addDataToEnd: (function(){
 
-            this.fetchData(page, $.proxy(function(data){
+            var mapper = function(data){
+                var model = this.collection.add(data);
+                return viewUser.compile(model);
+            };
 
-                var compiled = data.map($.proxy(function(data){
-                    var model = this.collection.add(data);
-                    return viewUser.compile(model);
-                }, this));
+            return function(data){
+
+                if(!data.length){
+                    this.reachEnd = true;//if reached the end
+                }
+
+                var compiled = data.map(mapper.bind(this));
 
                 this.container.append(BEMHTML.apply(compiled));
 
-                this.removeTop();
+                this.removeFromTop(data.length);
+            }
+        })(),
 
-            },this));
-        },
+        addDataToTop: (function(){
 
-        prependToTop: function(page){
+            var mapper = function(data){
+                var model = this.collection.addByIndex(0, data);
+                return viewUser.compile(model);
+            };
 
-            this.fetchData(page, $.proxy(function(data){
+            return function(data){
 
-                var compiled = data.map($.proxy(function(data){
-                    var model = this.collection.addByIndex(0, data);
-                    return viewUser.compile(model);
-                }, this));
+                var compiled = data.map(mapper.bind(this));
 
                 this.container.prepend(BEMHTML.apply(compiled));
 
-                this.removeBottom();
+                this.removeFromBottom();
+            }
+        })(),
 
+        fetchData: function(page, callback){
+
+            var params = {
+                page: page,
+                count: this.count,
+                sort: this.sort
+            };
+
+            this.loading = true;
+
+            apiUsers.fetch(params, $.proxy(function(data){
+                callback(data);
+                this.loading = false;
+            },this), $.proxy(function(e){
+                this.loading = false;
+                console.log(e);
             },this));
         },
 
-        fetchData: function(page, callback){
-            this.loading = true;
-            var params = {
-                page: page,
-                count: this.count
-            };
-            apiUsers.fetch(params, $.proxy(function(data){
-                if(!data.length){
-                    this.loading = false;
-                    return;
-                }
-                callback(data);
-                this.loading = false;
-            },this), console.log);
-        },
-
-        removeBottom: function(){
+        removeFromBottom: function(){
 
             var offset = this.page - this.offset;
 
-            if(offset <= 0){return}
+            if(offset <= 0){
+                return
+            }
 
             var count = offset * this.count;
 
@@ -134,29 +192,32 @@ function(provide, BEM, BEMDOM, $, BEMHTML, Glue, apiUsers, MODEL, viewUser) {
                 this.collection.remove(this.collection.getByIndex(this.collection.length()-1).id);
             }
 
-            this.offset -= offset;
-            this.updateScrolableArea();
+            this.offset-= offset;
+            this.reachEnd = false;
+            this.updateScroll();
         },
 
-        removeTop: function(){
+        removeFromTop: function(count){
 
-            var offset = this.page - this.limit - this.offset;
+            var offset = this.page - this.pagesLimit - this.offset;
 
-            if(offset <= 0){return}
+            if(offset <= 0){
+                return
+            }
 
-            var count = offset * this.count;
+            var countToRemove = offset * count;
 
-            this.container.children().slice(0, count).remove();
+            this.container.children().slice(0, countToRemove).remove();
 
-            while(count--){
+            while(countToRemove--){
                 this.collection.remove(this.collection.getByIndex(0).id);
             }
 
             this.offset += offset;
-            this.updateScrolableArea();
+            this.updateScroll();
         },
 
-        updateScrolableArea: function(){
+        updateScroll: function(){
             this.container.css('top', this.getVirtualHeight());
         },
 
